@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegación entre páginas con teclas</title>
+    <style>
+        .page {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .navigation {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor para cargar las páginas -->
+    <div id="content" class="">
+
+    </div>
+
+    <!-- Botones de navegación (opcional) -->
+    <div class="navigation">
+        <button id="prev">← Anterior</button>
+        <button id="next">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentPage = 1; // Página inicial
+        const totalPages = 4; // Total de páginas
+
+        // Función para cargar una página externa en el div
+        function loadPage(page) {
+            const contentDiv = document.getElementById('content');
+            fetch(`page${page}.html`)
+                .then(response => response.text())
+                .then(data => {
+                    contentDiv.innerHTML = data;
+                })
+                .catch(error => {
+                    contentDiv.innerHTML = "<p>Error al cargar la página</p>";
+                });
+        }
+
+        // Función para manejar las teclas de flechas
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') { // Flecha izquierda
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadPage(currentPage);
+                }
+            }
+            if (event.key === 'ArrowRight') { // Flecha derecha
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadPage(currentPage);
+                }
+            }
+        });
+
+        // Opcional: Botón anterior
+        document.getElementById('prev').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadPage(currentPage);
+            }
+        });
+
+        // Opcional: Botón siguiente
+        document.getElementById('next').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadPage(currentPage);
+            }
+        });
+    </script>
+</body>
+</html>
