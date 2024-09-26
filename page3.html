@@ -8,73 +8,167 @@
         html, body {
             height: 100%;
             margin: 0;
+            display: flex;
+            justify-content: center;  /* Centrado horizontal */
+            align-items: center;  /* Centrado vertical */
+            font-family: 'Roboto', sans-serif; /* Fuente Roboto */
         }
+
         body {
-            background-image: url('img/3.jpeg'); /* URL de tu imagen */
-            background-size: cover; /* Hace que la imagen cubra toda la pantalla */
-            background-position: center; /* Centra la imagen */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-image: url('img/3.png'); /* Imagen de baja calidad */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Centrar horizontalmente */
+            align-items: center; /* Centrar verticalmente */
         }
+
+        /* Estilo para imágenes que se cargarán diferidamente */
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .loaded {
+            opacity: 1;
+        }
+
+        .content {
+            text-align: center; /* Centra el texto dentro de su contenedor */
+            font-size: 2rem; /* Tamaño del texto */
+            font-weight: 700; /* Grosor del texto */
+            color: #ffffff; /* Color del texto */
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            color: #ffffff;
+            font-size: 2.5rem; /* Tamaño grande por defecto */
+        }
+
+        p {
+            text-indent: 50px;
+            text-align: justify;
+            letter-spacing: 3px;
+            color: #ffffff;
+            font-size: 1.2rem; /* Tamaño de texto adecuado para párrafos */
+        }
+
+        .oval-button {
+            padding: 15px 40px;  /* Espaciado más amplio en móviles */
+            border: none;  /* Elimina el borde */
+            border-radius: 50px;  /* Hace que los bordes sean redondeados (ovalados) */
+            background-color: #ffffff;  /* Color de fondo */
+            color: #000000;  /* Color del texto */
+            font-size: 1.5rem;  /* Tamaño del texto mayor para más accesibilidad */
+            font-weight: 600;  /* Grosor del texto */
+            cursor: pointer;  /* Cambia el cursor al pasar por encima */
+            transition: background-color 0.3s ease;  /* Transición suave en hover */
+        }
+
+        .oval-button:hover {
+            background-color: #0a5d8d;  /* Cambia el color de fondo al pasar el mouse */
+        }
+
+        /* Contenedor del botón centrado */
+        .btnstyle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Responsividad para pantallas más pequeñas */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Añadir un pequeño margen en pantallas pequeñas */
+            }
+
+            h1 {
+                font-size: 2rem; /* Tamaño del título para pantallas más pequeñas */
+            }
+
+            p {
+                font-size: 1rem; /* Reducir el tamaño del texto para móviles */
+                letter-spacing: 1px; /* Menos espaciado entre letras */
+                text-indent: 30px; /* Reducir sangría en móviles */
+            }
+
+            .oval-button {
+                font-size: 1.2rem; /* Botón más pequeño en pantallas pequeñas */
+                padding: 10px 30px; /* Menor padding en pantallas pequeñas */
+            }
+        }
+
+        /* Más ajustes para pantallas muy pequeñas (móviles pequeños) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem; /* Aún más pequeño en móviles muy pequeños */
+            }
+
+            p {
+                font-size: 0.9rem; /* Reducir tamaño de texto en móviles pequeños */
+                text-indent: 20px; /* Reducir sangría aún más */
+            }
+
+            .oval-button {
+                font-size: 1rem;  /* Aún más pequeño en pantallas de móviles pequeños */
+                padding: 8px 20px; /* Ajustar padding para móviles pequeños */
+            }
+        }
+
     </style>
 </head>
 <body>
-    <!-- Contenedor para cargar las páginas -->
-    <div id="content" class="page">
-
+    <!-- Contenido centrado -->
+    <div id="content" class="page active">
+        <h1>Hola Cabr.. Somos GOAT</h1>
+        <br> 
+        <p>
+            Descubre porque las marcas nos eligieron para potenciar la esencia de sus estrategias de marketing y publicidad
+        </p>
+        <br>
+        <div class="btnstyle">
+            <button class="oval-button">Gritame</button>
+        </div>
     </div>
 
-    <!-- Botones de navegación (opcional) -->
-    <div class="navigation">
-        <button id="prev" hidden>← Anterior</button>
-        <button id="next" hidden>Siguiente →</button>
-    </div>
     <script>
-    let currentPage = 1; // Página inicial
-    const totalPages = 6; // Total de páginas
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cargar la imagen de fondo de alta calidad una vez que se haya cargado la página
+            const highResBackground = new Image();
+            highResBackground.src = 'img/1-high-quality.jpg'; // Imagen de fondo de alta calidad
 
-        // Función para cargar una página externa en el div
-        function loadPage(page) {
-            const contentDiv = document.getElementById('content');
-            fetch(`page${page}.html`)
-                .then(response => response.text())
-                .then(data => {
-                    contentDiv.innerHTML = data;
-                })
-                .catch(error => {
-                    contentDiv.innerHTML = "<p>Error al cargar la página</p>";
+            highResBackground.onload = function() {
+                document.body.style.backgroundImage = `url('${highResBackground.src}')`; // Reemplaza la imagen de fondo
+            };
+
+            // Cargar imágenes de forma diferida dentro del contenido de la página
+            const lazyImages = document.querySelectorAll(".lazy-image");
+
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        const highResImg = new Image();
+                        highResImg.src = img.getAttribute("data-src");
+                        highResImg.onload = function() {
+                            img.src = highResImg.src; // Reemplaza con la imagen de alta calidad
+                            img.classList.remove("lazy-image");
+                            img.classList.add("loaded");
+                        };
+                        observer.unobserve(img); // Deja de observar la imagen una vez que se ha cargado
+                    }
                 });
-        }
+            });
 
-        // Función para manejar las teclas de flechas
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowLeft') { // Flecha izquierda
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadPage(currentPage);
-                }
-            }
-            if (event.key === 'ArrowRight') { // Flecha derecha
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadPage(currentPage);
-                }
-            }
-        });
-
-        // Opcional: Botón anterior
-        document.getElementById('prev').addEventListener('click', function() {
-            if (currentPage > 1) {
-                currentPage--;
-                loadPage(currentPage);
-            }
-        });
-
-        // Opcional: Botón siguiente
-        document.getElementById('next').addEventListener('click', function() {
-            if (currentPage < totalPages) {
-                currentPage++;
-                loadPage(currentPage);
-            }
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
+            });
         });
     </script>
 </body>

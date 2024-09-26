@@ -5,23 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imagen de fondo completa</title>
     <style>
-        html, body {
+           /* Estilo para la pantalla de carga */
+           #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column; /* Permite apilar los elementos verticalmente */
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            font-size: 2rem;
+            color: #4CAF50;
+        }
+
+        /* Ajuste de tamaño de la imagen de fondo */
+        .loading-image {
+            width: 150px; /* Ajusta este valor para cambiar el tamaño de la imagen */
+            height: 150px;
+            background-image: url('./img/goat.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        /* Animación de carga */
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #4CAF50;
+            width: 50px;
+            height: 50px;
+            animation: spinner 1.5s linear infinite;
+        }
+
+        /* Estilo para el contenido principal (que se cargará después) */
+        
+        html {
             height: 100%;
             margin: 0;
+            display: flex;
+            justify-content: center;  /* Centrado horizontal */
+            align-items: center;  /* Centrado vertical */
+            font-family: 'Roboto', sans-serif; /* Fuente Roboto */
         }
+       
         body {
-            background-image: url('img/1.jpeg'); /* URL de tu imagen */
-            background-size: cover; /* Hace que la imagen cubra toda la pantalla */
-            background-position: center; /* Centra la imagen */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-image: url('img/1.png'); /* Imagen de baja calidad */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Centrar horizontalmente */
+            align-items: center; /* Centrar verticalmente */
+            font-family: 'Roboto', sans-serif; /* Aplicar la fuente Roboto */
         }
+
+        /* Estilo para imágenes que se cargarán diferidamente */
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .loaded {
+            opacity: 1;
+        }
+
+        /* Opcional: Estilo de imágenes que tendrán baja calidad hasta que cargue la alta */
+        .placeholder {
+            filter: blur(5px); /* Añadir un efecto de desenfoque para las imágenes de baja calidad */
+        }
+        .content-carga{
+            text-align: center; /* Centra el texto dentro de su contenedor */
+            font-size: 2rem; /* Tamaño del texto (2rem = aproximadamente 32px) */
+            font-weight: 700; /* Grosor del texto, Roboto 700 es bold */
+            color: #ffffff; /* Color del texto */
+        }
+        #content {
+            display: none; /* Inicialmente oculto hasta que termine de cargar */
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            color: #ffffff;
+           }
+        p {
+            text-indent: 50px;
+            text-align: justify;
+            letter-spacing: 3px;
+            color: #ffffff;
+          }
+          .oval-button {
+            padding: 10px 30px;  /* Espaciado interno del botón */
+            border: none;  /* Elimina el borde */
+            border-radius: 50px;  /* Hace que los bordes sean redondeados (ovalados) */
+            background-color: #ffffff;  /* Color de fondo verde */
+            color: rgb(0, 0, 0);  /* Color del texto */
+            font-size: 1.2rem;  /* Tamaño del texto */
+            font-weight: 600;  /* Grosor del texto */
+            cursor: pointer;  /* Cambia el cursor al pasar por encima */
+            transition: background-color 0.3s ease;  /* Transición suave en hover */
+            vertical-align: middle;
+        }
+
+        /* Efecto hover para cambiar el color al pasar sobre el botón */
+        .oval-button:hover {
+            background-color: #0a5d8d;  /* Cambia el color de fondo al pasar el mouse */
+        }
+        .btnstyle{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+        }
+        /* Responsividad para pantallas más pequeñas */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Añadir un pequeño margen en pantallas pequeñas */
+            }
+
+            h1 {
+                font-size: 2rem; /* Tamaño del título para pantallas más pequeñas */
+            }
+
+            p {
+                font-size: 1rem; /* Reducir el tamaño del texto para móviles */
+                letter-spacing: 1px; /* Menos espaciado entre letras */
+                text-indent: 30px; /* Reducir sangría en móviles */
+            }
+
+            .oval-button {
+                font-size: 1.2rem; /* Botón más pequeño en pantallas pequeñas */
+                padding: 10px 30px; /* Menor padding en pantallas pequeñas */
+            }
+        }
+
+        /* Más ajustes para pantallas muy pequeñas (móviles pequeños) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem; /* Aún más pequeño en móviles muy pequeños */
+            }
+
+            p {
+                font-size: 0.9rem; /* Reducir tamaño de texto en móviles pequeños */
+                text-indent: 20px; /* Reducir sangría aún más */
+            }
+
+            .oval-button {
+                font-size: 1rem;  /* Aún más pequeño en pantallas de móviles pequeños */
+                padding: 8px 20px; /* Ajustar padding para móviles pequeños */
+            }
+        }
+
     </style>
 </head>
 <body>
+    <!-- Pantalla de carga -->
+    <div id="loading-screen">
+        <div class="loading-image"></div> <!-- Imagen centrada y más pequeña -->
+        <span>Cargando...</span> <!-- Texto debajo de la imagen -->
+    </div>
+
     <!-- Contenedor para cargar las páginas -->
     <div id="content" class="page active">
 
+            <h1>Hola Cabr.. Somos GOAT</h1>
+            <br> 
+            <p>
+                Descubre porque las marcas nos eligieron para potenciar la esencia de  sus estrategias de marketing y publicidad
+            </p>
+            <br>
+            <div class="btnstyle">
+                <button class="oval-button">Gritame</button>
+            </div>
     </div>
+
+    
+
+    
+
+    
 
     <!-- Botones de navegación (opcional) -->
     <div class="navigation">
@@ -75,6 +251,49 @@
                 currentPage++;
                 loadPage(currentPage);
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cargar la imagen de fondo de alta calidad una vez que se haya cargado la página
+            const highResBackground = new Image();
+            //highResBackground.src = 'img/1.png'; // Imagen de fondo de alta calidad
+
+            highResBackground.onload = function() {
+                document.body.style.backgroundImage = `url('${highResBackground.src}')`; // Reemplaza la imagen de fondo
+            };
+
+            // Cargar imágenes de forma diferida dentro del contenido de la página
+            const lazyImages = document.querySelectorAll(".lazy-image");
+
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        const highResImg = new Image();
+                        highResImg.src = img.getAttribute("data-src");
+                        highResImg.onload = function() {
+                            img.src = highResImg.src; // Reemplaza con la imagen de alta calidad
+                            img.classList.remove("lazy-image");
+                            img.classList.add("loaded");
+                        };
+                        observer.unobserve(img); // Deja de observar la imagen una vez que se ha cargado
+                    }
+                });
+            });
+
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
+            });
+        });
+         // Simular la carga de una página durante 3 segundos
+         window.addEventListener('load', function() {
+            // Simulación de carga de contenido adicional (reemplaza esto con la carga real si es necesario)
+            setTimeout(function() {
+                // Ocultar la pantalla de carga
+                document.getElementById('loading-screen').style.display = 'none';
+                // Mostrar el contenido de la página
+                document.getElementById('content').style.display = 'block';
+            }, 1000); // Simulación de 3 segundos
         });
     </script>
 </body>
