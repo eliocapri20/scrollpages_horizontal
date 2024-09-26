@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imagen de fondo completa</title>
@@ -27,7 +28,7 @@
         .loading-image {
             width: 150px; /* Ajusta este valor para cambiar el tamaño de la imagen */
             height: 150px;
-            background-image: url('./img/goat.gif');
+            background-image: url('./assets/img/goat.gif');
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -60,7 +61,7 @@
         }
        
         body {
-            background-image: url('img/1.png'); /* Imagen de baja calidad */
+            background-image: url('./assets/img/1.png'); /* Imagen de baja calidad */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -70,6 +71,10 @@
             justify-content: center; /* Centrar horizontalmente */
             align-items: center; /* Centrar verticalmente */
             font-family: 'Roboto', sans-serif; /* Aplicar la fuente Roboto */
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
         }
 
         /* Estilo para imágenes que se cargarán diferidamente */
@@ -102,6 +107,7 @@
             text-align: center;
             text-transform: uppercase;
             color: #ffffff;
+
            }
         p {
             text-indent: 50px;
@@ -135,6 +141,9 @@
         @media (max-width: 768px) {
             body {
                 padding: 10px; /* Añadir un pequeño margen en pantallas pequeñas */
+                background-position: center 30%;
+                background-position-x: 40%;
+                width: 400px;
             }
 
             h1 {
@@ -170,9 +179,52 @@
             }
         }
 
+        nav {
+            
+            padding: 10px 20px;
+            border-radius: 8px;
+            position: fixed;
+            top: 0;
+            width: 150px;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        li {
+            display: inline;
+        }
+        a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        a:hover {
+            color: #ddd;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
     </style>
+     <nav>
+        <ul>
+            <li><a href="#home"><img src="./assets/img/001 Logo GOAT png/Log GOAT png (2).png" alt="Home" class="icon" style="width: 250px; height: 100px;"></a></li>
+            <span style="font-size: 3em;">
+                    <i class='fas fa-ellipsis-h' style='font-size:36px;color:rgb(255, 255, 255)'></i>
+            </span>
+        </ul>
+    </nav>
 </head>
 <body>
+   
     <!-- Pantalla de carga -->
     <div id="loading-screen">
         <div class="loading-image"></div> <!-- Imagen centrada y más pequeña -->
@@ -253,38 +305,7 @@
             }
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Cargar la imagen de fondo de alta calidad una vez que se haya cargado la página
-            const highResBackground = new Image();
-            //highResBackground.src = 'img/1.png'; // Imagen de fondo de alta calidad
-
-            highResBackground.onload = function() {
-                document.body.style.backgroundImage = `url('${highResBackground.src}')`; // Reemplaza la imagen de fondo
-            };
-
-            // Cargar imágenes de forma diferida dentro del contenido de la página
-            const lazyImages = document.querySelectorAll(".lazy-image");
-
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        const highResImg = new Image();
-                        highResImg.src = img.getAttribute("data-src");
-                        highResImg.onload = function() {
-                            img.src = highResImg.src; // Reemplaza con la imagen de alta calidad
-                            img.classList.remove("lazy-image");
-                            img.classList.add("loaded");
-                        };
-                        observer.unobserve(img); // Deja de observar la imagen una vez que se ha cargado
-                    }
-                });
-            });
-
-            lazyImages.forEach(img => {
-                imageObserver.observe(img);
-            });
-        });
+        
          // Simular la carga de una página durante 3 segundos
          window.addEventListener('load', function() {
             // Simulación de carga de contenido adicional (reemplaza esto con la carga real si es necesario)
@@ -295,6 +316,16 @@
                 document.getElementById('content').style.display = 'block';
             }, 1000); // Simulación de 3 segundos
         });
+
+        function reloadPage() {
+            // Se verifica si la página ya se ha recargado
+            if (!sessionStorage.getItem('pageReloaded')) {
+                sessionStorage.setItem('pageReloaded', 'true');
+                location.reload();
+            }
+        }
+        window.onload = reloadPage;
+
     </script>
 </body>
 </html>

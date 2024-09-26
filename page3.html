@@ -15,7 +15,7 @@
         }
 
         body {
-            background-image: url('img/3.png'); /* Imagen de baja calidad */
+            background-image: url('./assets/img/3.png'); /* Imagen de baja calidad */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -86,6 +86,9 @@
         @media (max-width: 768px) {
             body {
                 padding: 10px; /* Añadir un pequeño margen en pantallas pequeñas */
+                background-position: center 30%;
+                background-position-x: 40%;
+                width: 400px;
             }
 
             h1 {
@@ -124,52 +127,81 @@
     </style>
 </head>
 <body>
-    <!-- Contenido centrado -->
+    <!-- Contenedor para cargar las páginas -->
     <div id="content" class="page active">
+
+    </div>
+
+    <!-- Botones de navegación (opcional) -->
+    <div class="navigation">
         <h1>Hola Cabr.. Somos GOAT</h1>
-        <br> 
-        <p>
-            Descubre porque las marcas nos eligieron para potenciar la esencia de sus estrategias de marketing y publicidad
-        </p>
-        <br>
-        <div class="btnstyle">
-            <button class="oval-button">Gritame</button>
-        </div>
+            <br> 
+            <p>
+                Descubre porque las marcas nos eligieron para potenciar la esencia de  sus estrategias de marketing y publicidad
+            </p>
+            <br>
+            <div class="btnstyle">
+                <button class="oval-button">Gritame</button>
+            </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Cargar la imagen de fondo de alta calidad una vez que se haya cargado la página
-            const highResBackground = new Image();
-            highResBackground.src = 'img/1-high-quality.jpg'; // Imagen de fondo de alta calidad
+        let currentPage = 1; // Página inicial
+        const totalPages = 6; // Total de páginas
 
-            highResBackground.onload = function() {
-                document.body.style.backgroundImage = `url('${highResBackground.src}')`; // Reemplaza la imagen de fondo
-            };
-
-            // Cargar imágenes de forma diferida dentro del contenido de la página
-            const lazyImages = document.querySelectorAll(".lazy-image");
-
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        const highResImg = new Image();
-                        highResImg.src = img.getAttribute("data-src");
-                        highResImg.onload = function() {
-                            img.src = highResImg.src; // Reemplaza con la imagen de alta calidad
-                            img.classList.remove("lazy-image");
-                            img.classList.add("loaded");
-                        };
-                        observer.unobserve(img); // Deja de observar la imagen una vez que se ha cargado
-                    }
+        // Función para cargar una página externa en el div
+        function loadPage(page) {
+            const contentDiv = document.getElementById('content');
+            fetch(`page${page}.html`)
+                .then(response => response.text())
+                .then(data => {
+                    contentDiv.innerHTML = data;
+                })
+                .catch(error => {
+                    contentDiv.innerHTML = "<p>Error al cargar la página</p>";
                 });
-            });
+        }
 
-            lazyImages.forEach(img => {
-                imageObserver.observe(img);
-            });
+        // Función para manejar las teclas de flechas
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') { // Flecha izquierda
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadPage(currentPage);
+                }
+            }
+            if (event.key === 'ArrowRight') { // Flecha derecha
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadPage(currentPage);
+                }
+            }
         });
+
+        // Opcional: Botón anterior
+        document.getElementById('prev').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadPage(currentPage);
+            }
+        });
+
+        // Opcional: Botón siguiente
+        document.getElementById('next').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadPage(currentPage);
+            }
+        });
+
+        function reloadPage() {
+            // Se verifica si la página ya se ha recargado
+            if (!sessionStorage.getItem('pageReloaded')) {
+                sessionStorage.setItem('pageReloaded', 'true');
+                location.reload();
+            }
+        }
+        window.onload = reloadPage;
     </script>
 </body>
 </html>
